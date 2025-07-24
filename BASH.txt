@@ -183,3 +183,6 @@ awk '{if ($1 > 20){x = $1 * 2 print x} else{x = $1 / 2 print x}}' testfile
 
 Пример сложного однострочника 
 or var in $(cat ./1.txt); do $(rustscan -a $var --ulimit 5000 -- -O | grep -e "OS details" -e "Scanning 10" | awk 'BEGIN {A=1}{if (A==1){FS=":"; print $2} else {print $2}}{A=A+1}'>> 2.txt); done
+
+awk '{ total = 0; i = 1; while (i < 4){total += $i; i++} avg = total / 3print "Average:",avg
+}' testfile
