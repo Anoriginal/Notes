@@ -1,3 +1,5 @@
+https://learn.microsoft.com/ru-ru/powershell/scripting/learn/ps101/00-introduction?view=powershell-7.5
+
 Пользовательские переменные
 
 1..5 - Оператор диапазона
@@ -18,19 +20,21 @@ $<Имя_переменной>.GetType().name - получить тип пере
 Select-Object -InputObject $<Имя_объекта> -Property * - просмотр атрибутов объекта 
 Get-Member -InputObject $<Имя_переменной> - Просмотр методов объекта
 
-Структурфы данных 
+Структуры данных 
 
 $colorPicker = @('blue','white','yellow','black') - определение массивов
 $colorPicker[2] - чтение заданного элемента
 $colorPicker[1..3] - чтение диапазона элементов
 $colorPicker[3] = 'white' - Изменение элементов массива
 $colorPicker = $colorPicker + 'orange' - Добавление элементов массива
-$colorPicker += @('pink','cyan') - Добавление нескоьких элементов в массив
+$colorPicker += @('pink','cyan') - Добавление нескольких элементов в массив
 $colorPicker = [System.Collections.ArrayList]@('blue','white','yellow', 'black') - Создане Array List
 $colorPicker.Add('gray') - Добавление элемента Array List
 $colorPicker.Remove('gray') - Удаление элемента Array List
+
 __Создание Хэш таблицы__
- $users = @{
+
+$users = @{
 abertram = 'Adam Bertram'
 raquelcer = 'Raquel Cerillo'
 zheng21 = 'Justin Zheng'
@@ -75,4 +79,64 @@ $hashtable.Remove('123') Удаление элемента по ключу
 
 Пользовательские объекты
 
-$MyObject = New-Object -TypeName PSCustomObject Создание пользовательского Объекта
+$MyObject = New-Object -TypeName PSCustomObject Хуёвое создание пользовательского Объекта
+$MyObject = [PSCustomObject]@{OSName=$(hostname); OSVersion='B'} Создание пользовательского Объекта
+
+З Объединение команд
+
+Get-Service -Name Wazuh | Start-Service Запуск службы перехватом выаода
+Start-Service $(GetService -Name Wazuh) Тоже самое и хуй знает какая вообще разница
+Get-Content -Path C:\1.txt Просмотр содержимого файла построчно добавляя строки в масиив
+Привязка параметров
+Invoke-Expression $(Get-Content -Path D:\1.ps1) - Обход политики запуска скриптов (Set-ExecutionPolicy) Построчно читает файл запуская команды поочередно. Подойдёт не для любого скрипта...
+Get-Help -Name <Команда> –Full - Поле Acceptpipelineinput (в русской локализированной версии PowerShell «Принимать входные данные конвейера?») говорит о возможности принимать конвейер.
+
+$serviceObject = [PSCustomObject]@{Name = 'wuauserv'; ComputerName = 'SERV1'} - Созданный объект передаётся в команду
+$serviceObject | Get-Service                                                  - -Name wuauserv -Computername SERV1
+
+Операторы сравнения 
+-eq сравнивает два значения и возвращает True, если они равны.
+-ne сравнивает два значения и возвращает True, если они не равны.
+-gt сравнивает два значения и возвращает True, если первое больше второго.
+-ge сравнивает два значения и возвращает True, если первое больше или равно второму.
+-lt сравнивает два значения и возвращает True, если первое меньше второго.
+-le сравнивает два значения и возвращает True, если первое меньше или равно второму.
+
+If
+if(<Условие>){<Выполняемый код>}elseif(){}else{}
+
+Switch
+switch(<Условие>){<Значение> {<Код>} <Значение> {<Код>} default {<Код>}}
+
+foreach 
+foreach($i in $(1..100)){$i}
+
+ForEach-Object
+ForEach-Object -InputObject $<Класс_или_переменная> -Process {$_} - Одинаковая реализация циклов
+$my.ForEach({$_})                                                 - действия могут производиться с объектами 
+
+цикл for
+for ($i = 1; $i -le 2025; $i++){Write-Host "число $i"}
+
+циел while 
+while (<условие>) {<код (при надобности используем break)>} 
+
+Циклы do/while и do/until
+do {<код>} while (<условие>)
+do {<код>} until (<условие>)
+
+5. ОБРАБОТКА ОШИБОК 
+ОБРАБОТКА НЕЗАВЕРШАЮЩИХ ОШИБОК
+Error-Action 
+имеет приоретет над $ErrorActionPreference
+• Continue: выводит сообщение об ошибке и продолжает выполнение командлета. Является значением по умолчанию.
+• Ignore: продолжает выполнение командлета без вывода ошибки и ее записи в переменную $Error.
+• Inquire: выводит сообщение об ошибке и предлагает пользователю ввести данные перед продолжением.
+• SilentlyContinue: продолжает выполнение командлета без вывода сообщения об ошибке, но записывает ее в переменную $Error.
+• Stop: выводит сообщение об ошибке и останавливает выполнение командлета.
+
+ try/catch/finally
+try {} catch {} finally {}  -   С помощью конструкции try/catch/finally вы словно «подстилаете соломы» для обработки ошибок. Блок try содержит исходный код, который надо запустить. Если возникает завершающая ошибка, PowerShell перенаправляет поток выполнения в блок catch. Независимо от того, выполнится ли код в блоке catch, код в блоке finally будет выполняться всегда. 
+
+
+
